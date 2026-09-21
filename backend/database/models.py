@@ -1,6 +1,7 @@
 from datetime import datetime, date
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, SQLModel, UUID
 from decimal import Decimal
+from pydantic import EmailStr
 
 class CommercialType(SQLModel, table=True):
     type_id: int | None = Field(default=None, primary_key=True)
@@ -27,7 +28,7 @@ class CommercialItems(SQLModel, table=True):
 class Orders(SQLModel, table=True):
     order_id: int | None = Field(default=None, primary_key=True)
     client_name: str
-    email: str
+    email: EmailStr
     subtotal: Decimal
     discount_total: Decimal
     delivery_fee: Decimal
@@ -53,3 +54,17 @@ class OrderDelivery(SQLModel, table=True):
     net_value: Decimal
     status: str
     created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class Admin(SQLModel, table=True):
+    admin_id: int = Field(default=1, primary_key=True, sa_column_kwargs={"check": "id = 1"})
+    email: EmailStr = Field(unique=True)
+    password: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class AdminAccess(SQLModel, table=True):
+    token_id: UUID | None = Field(default=None, primary_key=True)
+    admin_id: int = Field(foreign_key="admin.admin_id")
+    is_revoked: bool
+    accessed_at: datetime = Field(default_factory=datetime.utcnow)
+    expires_at: date
+    logout_at: date
