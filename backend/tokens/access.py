@@ -9,7 +9,7 @@ from ..database.session import SessionDep
 from ..database.models import Admin
 
 from ..config import settings
-from ..schemas import admin_inputs
+from ..schemas import admin_schemas
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')
 
@@ -42,7 +42,7 @@ def verify_token(token: str, credentials_exception):
         if admin_id is None:
             raise credentials_exception
 
-        return admin_inputs.AccessTokenData(admin_id=admin_id)
+        return admin_schemas.AccessTokenData(admin_id=admin_id)
 
     except JWTError:
         raise credentials_exception

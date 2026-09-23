@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from ...database.session import SessionDep
+from dependencies import SessionDep
 from ...database.models import Admin, AdminAccess
 
-from ...schemas import admin_inputs
+from ...schemas import admin_schemas
 
 from ...validations import hash, email_validation, password_validation
 
@@ -19,7 +19,7 @@ router = APIRouter(prefix="/admin", tags=["Admin Account Management"])
 # Administration Sing-Up
 
 @router.post("/singup")
-def admin_singup(db: SessionDep, data: admin_inputs.AdminInput):
+def admin_singup(db: SessionDep, data: admin_schemas.AdminAccount):
     email_validation.email_format(data.email)
     password_validation.requirements(data.password, data.password_confirm)
 
@@ -40,7 +40,7 @@ def admin_singup(db: SessionDep, data: admin_inputs.AdminInput):
 # Administration Login
 
 @router.post("/login")
-def admin_login(db: SessionDep, data: admin_inputs.AdminInput):
+def admin_login(db: SessionDep, data: admin_schemas.AdminAccount):
     email_validation.email_format(data)
 
     # Searching for an existing account and validating the credentials.
